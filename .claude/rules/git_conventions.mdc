@@ -1,0 +1,72 @@
+---
+description: Git操作とコミットメッセージの規約。Git操作時に適用。
+alwaysApply: true
+---
+
+# Git Conventions
+
+## コミットメッセージ形式
+
+Conventional Commitsに準拠する。
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+[optional footer]
+```
+
+### Type
+
+| Type | 用途 |
+|------|------|
+| feat | 新機能 |
+| fix | バグ修正 |
+| docs | ドキュメントのみの変更 |
+| style | コードの意味に影響しない変更（フォーマット等） |
+| refactor | バグ修正でも機能追加でもないコード変更 |
+| test | テストの追加・修正 |
+| chore | ビルドプロセスやツールの変更 |
+| ci | CI設定の変更 |
+
+## ブランチ戦略
+
+- `main`: 本番リリース可能な状態を維持
+- `develop`: 開発統合ブランチ
+- `feature/<issue-id>-<description>`: 機能開発
+- `fix/<issue-id>-<description>`: バグ修正
+- `docs/<description>`: ドキュメント更新
+
+## 禁止事項
+
+- `main` への直接プッシュ禁止（明示的な指示がない限り）
+- force push 禁止（明示的な指示がない限り）
+- シークレット情報のコミット禁止
+
+## /push コマンド実行仕様
+
+`/push` を受信したら以下を **Agent として順に実行する**:
+
+```bash
+# 1. シークレット混入チェック
+git status
+# .env, *.pem, *.key 等が含まれていないことを確認
+# 検出した場合は中断し警告を出力する
+
+# 2. 型チェック（.tsx/.jsx/.ts/.py を含む場合）
+# プロジェクト固有の型チェックコマンドは .ai-project/ を参照
+
+# 3. ステージング
+# 変更されたファイルを git add する
+# プロジェクト固有のステージング対象は .ai-project/ を参照
+
+# 4. コミット
+# Conventional Commits形式でコミットメッセージを生成
+git commit -m "<type>(<scope>): <description>"
+
+# 5. プッシュ
+git push origin <branch>
+```
+
+> ユーザーの許可確認は不要。/push コマンドの受信をもって実行許可とみなす。
+> シークレットファイルが検出された場合のみ中断し、警告を出力する。
