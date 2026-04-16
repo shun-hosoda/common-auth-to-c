@@ -1,37 +1,191 @@
 openapi: 3.1.0
 info:
-  title: API Specification
+  title: common-auth-to-c API
   version: 0.1.0
   description: |
-    API仕様書テンプレート。
-    実装前にエンドポイントを定義し、設計レビューを通過すること。
+    toC向けSaaS認証基盤 API仕様
+    
+    ## 認証フロー
+    - 認証コア: GoTrue (Supabase Auth OSS) が担当
+    - Next.js カスタムRoute: `/auth/callback` のみ自前実装
+    - セッション管理: @supabase/ssr (HttpOnly Cookie)
+    
+    ## GoTrue エンドポイント（セルフホスト時のベースURL: /auth/v1）
+    詳細: https://supabase.com/docs/reference/javascript/auth-api
 
 servers:
   - url: http://localhost:3000
-    description: Local development
+    description: Local development (Next.js)
+  - url: http://localhost:54321/auth/v1
+    description: Local GoTrue (Supabase Auth)
 
-paths: {}
-  # /example:
-  #   get:
-  #     summary: サンプルエンドポイント
-  #     operationId: getExample
-  #     tags: [example]
-  #     responses:
-  #       '200':
-  #         description: 成功
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/ExampleResponse'
+paths:
+  /auth/callback:
+    get:
+      summary: OAuth / Email確認 コールバックハンドラ
+      description: |
+        GoTrueからのコールバックを受け取り、セッションをCookieに保存してリダイレクトする。
+        Next.js Route Handler (`app/auth/callback/route.ts`) として実装。
+      operationId: authCallback
+      tags: [auth]
+      parameters:
+        - name: code
+          in: query
+          description: GoTrueからのauthorization code
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: コールバックの種別
+          schema:
+            type: string
+            enum: [signup, recovery, email_change, magiclink]
+        - name: next
+          in: query
+          description: ログイン後のリダイレクト先
+          schema:
+            type: string
+            default: /home
+      responses:
+        '302':
+          description: 認証成功 → next パラメータにリダイレクト
+        '400':
+          description: コールバックパラメータ不正（code/type欠落など）
+
+  /api/profile:
+    get:
+      summary: 自分のプロフィール取得
+      operationId: getMyProfile
+      tags: [profile]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: プロフィール情報
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    patch:
+      summary: プロフィール更新
+      operationId: updateMyProfile
+      tags: [profile]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileUpdateRequest'
+      responses:
+        '200':
+          description: 更新後のプロフィール
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/account:
+    delete:
+      summary: アカウント削除（退会）
+      description: |
+        自分のアカウントを削除する。
+        Phase 1: public.profiles.deleted_at を設定（ソフトデリート）+ auth.users を削除
+        実装: Server Action (service_role key 使用)
+      operationId: deleteAccount
+      tags: [account]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: 退会完了
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+# GoTrue エンドポイント（参照用ドキュメント。実装はsupabase-jsが担当）
+# POST /auth/v1/signup            — メール/パスワード登録
+# POST /auth/v1/token             — メール/パスワードログイン
+# GET  /auth/v1/authorize         — OAuthログイン開始 (provider=google)
+# POST /auth/v1/recover           — パスワードリセットメール送信
+# PATCH /auth/v1/user             — パスワード変更・プロフィール更新
+# POST /auth/v1/logout            — ログアウト
+# POST /auth/v1/token?grant_type=refresh_token — トークンリフレッシュ
+# POST /auth/v1/resend            — メール確認再送
 
 components:
-  schemas: {}
-    # ExampleResponse:
-    #   type: object
-    #   required: [id, name]
-    #   properties:
-    #     id:
-    #       type: string
-    #       format: uuid
-    #     name:
-    #       type: string
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sb-<projectRef>-auth-token
+      description: |
+        @supabase/ssr が自動設定するCookieの代表名。
+        実際のCookie名は `sb-<projectRef>-auth-token` 形式（チャンク分割: `...-0`, `...-1` 等）。
+        ⚠️ 直接参照不要 — @supabase/ssr が自動管理するため、実装時にCookie名をハードコードしないこと。
+        旧 @supabase/auth-helpers の `sb-access-token` とは異なる。
+
+  schemas:
+    Profile:
+      type: object
+      required: [id, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: auth.users.id と同一
+        display_name:
+          type: string
+          maxLength: 100
+          nullable: true
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+          maxLength: 100
+        avatar_url:
+          type: string
+          format: uri
+          nullable: true
+
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+  responses:
+    Unauthorized:
+      description: 認証されていない
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    BadRequest:
+      description: リクエストが不正
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+

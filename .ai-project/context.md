@@ -17,16 +17,15 @@
 
 ## 技術スタック
 
-> **未確定**: 要件定義・設計工程で決定する
-
 | レイヤー | 技術 | 備考 |
 |----------|------|------|
-| バックエンド | 未定 | backend/src/ |
-| フロントエンド | 未定 | frontend/src/ |
-| データベース | 未定 | docs/db/schema.sql が正 |
-| キャッシュ/セッション | 未定 | |
-| インフラ | 未定 | infra/ |
-| CI/CD | GitHub Actions | .github/workflows/ |
+| 認証基盤 | **Supabase Auth (GoTrue / OSS)** | セルフホスト。JWT・OAuth・メール確認を内蔵 |
+| フロントエンド | **Next.js 15 / TypeScript** | frontend/src/ |
+| データベース | **PostgreSQL 16** | Supabase内蔵。`auth.*` + `public.*` |
+| キャッシュ | **Redis 7** | レート制限補完用 |
+| インフラ | **Docker + Docker Compose** | どのクラウドでもデプロイ可能（クラウド非依存） |
+| リバースプロキシ | **Nginx** or **Traefik** | TLS・レート制限 |
+| CI/CD | **GitHub Actions** | .github/workflows/ |
 
 ## ディレクトリ構成
 
