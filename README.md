@@ -17,30 +17,15 @@ Copy-Item infra/docker/docker-compose.dist.yml <your-project>/infra/docker/docke
 Copy-Item infra/docker/.env.example <your-project>/infra/docker/.env
 ```
 
-この配布ファイルは **認証基盤（db/kong/auth/rest/inbucket）+ 任意のサンプルフロント** です。  
+この配布ファイルは **認証基盤（db/kong/auth/rest/inbucket）のみ** です。  
 本番利用は、利用側プロジェクトで独自フロントを用意し、`NEXT_PUBLIC_SUPABASE_URL=http://localhost:8100` を設定してください。
-
-### サンプルフロントを使う場合（任意）
-
-`docker-compose.auth.yml` の `frontend-sample` サービスの image タグを固定バージョンに変更:
-
-```yaml
-image: ghcr.io/YOUR_ORG/common-auth-to-c-sample-frontend:1.2.0   # latest より固定推奨
-```
-
-起動時は `sample` profile を指定:
-
-```powershell
-docker compose --profile sample up -d frontend-sample
-```
 
 ### バージョン更新方法（利用側）
 
 ```powershell
-# サンプルフロントを使う場合のみ
-# docker-compose.auth.yml の image タグを新バージョンに変更後
-docker compose pull frontend-sample
-docker compose --profile sample up -d frontend-sample
+# 認証基盤の配布ファイルを最新に差し替え後
+docker compose pull
+docker compose up -d
 ```
 
 ### 修正・リリース方法（このリポジトリ管理者）
@@ -49,7 +34,7 @@ docker compose --profile sample up -d frontend-sample
 # バグ修正・コミット後
 git tag v1.2.1
 git push origin v1.2.1
-# → GitHub Actions が自動ビルド・ghcr.io へ push
+# → GitHub Release / CHANGELOG として配布
 ```
 
 リリースノートは [CHANGELOG.md](CHANGELOG.md) を参照。

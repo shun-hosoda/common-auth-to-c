@@ -1,5 +1,5 @@
 # =============================================================
-# common-auth-to-c — 認証基盤 Compose スニペット
+# common-auth-to-c — 認証基盤 Compose スニペット（フロント含まない）
 # =============================================================
 # 使用方法:
 #   1. このファイルを自プロジェクトの infra/docker/ にコピー
@@ -82,24 +82,6 @@ services:
     ports:
       - "9000:9000"
       - "2500:2500"
-
-  frontend-sample:
-    # サンプルUI（任意）
-    # 利用側で独自フロントを使う場合は起動不要
-    # 起動: docker compose --profile sample up -d frontend-sample
-    profiles: ["sample"]
-    image: ghcr.io/YOUR_ORG/common-auth-to-c-sample-frontend:latest
-    restart: unless-stopped
-    depends_on:
-      auth:
-        condition: service_healthy
-    ports:
-      - "${FRONTEND_PORT:-3100}:3000"
-    environment:
-      NEXT_PUBLIC_SUPABASE_URL: http://kong:8000
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
-      NEXT_PUBLIC_APP_URL: ${SITE_URL:-http://localhost:3100}
-      SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
 
   db-migrate:
     image: postgres:15-alpine
