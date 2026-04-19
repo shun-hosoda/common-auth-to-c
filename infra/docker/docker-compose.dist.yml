@@ -83,9 +83,12 @@ services:
       - "9000:9000"
       - "2500:2500"
 
-  auth-frontend:
-    # image タグを固定して破壊的変更を防ぐ
-    image: ghcr.io/YOUR_ORG/common-auth-to-c:latest
+  frontend-sample:
+    # サンプルUI（任意）
+    # 利用側で独自フロントを使う場合は起動不要
+    # 起動: docker compose --profile sample up -d frontend-sample
+    profiles: ["sample"]
+    image: ghcr.io/YOUR_ORG/common-auth-to-c-sample-frontend:latest
     restart: unless-stopped
     depends_on:
       auth:

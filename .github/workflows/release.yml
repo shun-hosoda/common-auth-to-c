@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}   # your-org/common-auth-to-c
+  IMAGE_NAME: ${{ github.repository }}-sample-frontend   # your-org/common-auth-to-c-sample-frontend
 
 jobs:
   build-and-push:
