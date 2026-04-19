@@ -67,3 +67,20 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_new_user();
+
+-- =============================================================
+-- GoTrue search_path 設定
+-- supabase_auth_admin が auth.* テーブルをスキーマ指定なしで参照できるようにする
+-- =============================================================
+ALTER ROLE supabase_auth_admin SET search_path TO auth;
+
+-- =============================================================
+-- GoTrue v2.164.0 バックフィルマイグレーション スキップ
+-- 20221208132122: "id = user_id::text" (uuid = text) 比較で失敗するため
+-- 新規 DB では不要なバックフィルをスキップする
+-- =============================================================
+INSERT INTO auth.schema_migrations (version)
+SELECT '20221208132122'
+WHERE NOT EXISTS (
+  SELECT 1 FROM auth.schema_migrations WHERE version = '20221208132122'
+);
