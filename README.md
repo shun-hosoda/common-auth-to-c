@@ -5,6 +5,45 @@
 
 ---
 
+## 他プロジェクトからの利用 (配布運用)
+
+### 利用側プロジェクトのセットアップ
+
+```powershell
+# 1. Compose スニペットをコピー
+Copy-Item infra/docker/docker-compose.dist.yml <your-project>/infra/docker/docker-compose.auth.yml
+
+# 2. 環境変数ファイルをコピー・編集
+Copy-Item infra/docker/.env.example <your-project>/infra/docker/.env
+```
+
+`docker-compose.auth.yml` の `auth-frontend` サービスの image タグを固定バージョンに変更:
+
+```yaml
+image: ghcr.io/YOUR_ORG/common-auth-to-c:1.2.0   # latest より固定推奨
+```
+
+### バージョン更新方法（利用側）
+
+```powershell
+# docker-compose.auth.yml の image タグを新バージョンに変更後
+docker compose pull auth-frontend
+docker compose up -d auth-frontend
+```
+
+### 修正・リリース方法（このリポジトリ管理者）
+
+```powershell
+# バグ修正・コミット後
+git tag v1.2.1
+git push origin v1.2.1
+# → GitHub Actions が自動ビルド・ghcr.io へ push
+```
+
+リリースノートは [CHANGELOG.md](CHANGELOG.md) を参照。
+
+---
+
 ## 0. 前提
 
 - Docker Desktop が起動済み
