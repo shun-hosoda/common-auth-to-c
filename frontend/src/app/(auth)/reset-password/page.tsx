@@ -18,14 +18,18 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
   const isResetMode = mode === 'reset'
 
   return (
-    <main>
-      <h1>{isResetMode ? '新しいパスワードを設定' : 'パスワードをリセット'}</h1>
+    <div className="auth-page">
+      <main className="auth-card">
+        <h1 className="auth-title">
+          {isResetMode ? '新しいパスワードを設定' : 'パスワードをリセット'}
+        </h1>
 
-      {isResetMode ? <PasswordResetForm /> : <PasswordResetRequestForm />}
+        {isResetMode ? <PasswordResetForm /> : <PasswordResetRequestForm />}
 
-      <nav>
-        <Link href="/login">ログインページへ戻る</Link>
-      </nav>
-    </main>
+        <nav className="auth-nav">
+          <Link href="/login" className="auth-link">← ログインページへ戻る</Link>
+        </nav>
+      </main>
+    </div>
   )
 }

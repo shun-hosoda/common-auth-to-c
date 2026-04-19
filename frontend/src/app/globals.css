@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  /* 認証ページ用カードレイアウト */
+  .auth-page {
+    @apply min-h-screen flex items-center justify-center p-4;
+  }
+
+  .auth-card {
+    @apply w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8;
+  }
+
+  .auth-title {
+    @apply text-2xl font-bold text-slate-900 mb-6;
+  }
+
+  /* フォーム要素 */
+  .form-group {
+    @apply mb-4;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .form-input {
+    @apply w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900
+           placeholder-slate-400 bg-white
+           focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+           disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed
+           transition-colors;
+  }
+
+  .form-input[aria-invalid="true"] {
+    @apply border-red-400 focus:ring-red-400;
+  }
+
+  .form-error {
+    @apply mt-1 text-xs text-red-600;
+  }
+
+  .form-alert {
+    @apply mb-4 px-4 py-3 rounded-lg text-sm bg-red-50 border border-red-200 text-red-700;
+  }
+
+  .form-success {
+    @apply mb-4 px-4 py-3 rounded-lg text-sm bg-green-50 border border-green-200 text-green-700;
+  }
+
+  /* ボタン */
+  .btn {
+    @apply inline-flex items-center justify-center w-full px-4 py-2.5 rounded-lg text-sm font-medium
+           transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-indigo-600 hover:bg-indigo-700 text-white focus:ring-indigo-500;
+  }
+
+  .btn-outline {
+    @apply btn bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 focus:ring-slate-400;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 hover:bg-red-700 text-white focus:ring-red-500;
+  }
+
+  /* 区切り線 */
+  .divider {
+    @apply relative my-6 flex items-center;
+  }
+
+  .divider::before,
+  .divider::after {
+    @apply content-[''] flex-1 border-t border-slate-200;
+  }
+
+  .divider-text {
+    @apply mx-4 text-xs text-slate-400;
+  }
+
+  /* ナビゲーションリンク */
+  .auth-nav {
+    @apply mt-6 text-center text-sm text-slate-500;
+  }
+
+  .auth-link {
+    @apply text-indigo-600 hover:text-indigo-700 font-medium hover:underline;
+  }
+}

@@ -42,8 +42,8 @@ export default function ProfileForm({ profile }: Props) {
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <div>
-        <label htmlFor="display_name">表示名</label>
+      <div className="form-group">
+        <label htmlFor="display_name" className="form-label">表示名</label>
         <input
           id="display_name"
           name="display_name"
@@ -51,11 +51,12 @@ export default function ProfileForm({ profile }: Props) {
           defaultValue={profile?.display_name ?? ''}
           maxLength={100}
           disabled={isPending}
+          className="form-input"
         />
       </div>
 
-      <div>
-        <label htmlFor="avatar_url">アバター URL</label>
+      <div className="form-group">
+        <label htmlFor="avatar_url" className="form-label">アバター URL</label>
         <input
           id="avatar_url"
           name="avatar_url"
@@ -63,16 +64,20 @@ export default function ProfileForm({ profile }: Props) {
           defaultValue={profile?.avatar_url ?? ''}
           placeholder="https://example.com/avatar.png"
           disabled={isPending}
+          className="form-input"
         />
       </div>
 
       {message && (
-        <p role={message.type === 'error' ? 'alert' : 'status'}>
+        <p
+          role={message.type === 'error' ? 'alert' : 'status'}
+          className={message.type === 'error' ? 'form-alert' : 'form-success'}
+        >
           {message.text}
         </p>
       )}
 
-      <button type="submit" disabled={isPending}>
+      <button type="submit" disabled={isPending} className="btn-primary mt-2">
         {isPending ? '更新中...' : '更新する'}
       </button>
     </form>

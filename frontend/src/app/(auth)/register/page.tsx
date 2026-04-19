@@ -7,18 +7,25 @@ import { OAuthButton } from '@/components/auth/OAuthButton'
  */
 export default function RegisterPage() {
   return (
-    <main>
-      <h1>アカウントを作成</h1>
+    <div className="auth-page">
+      <main className="auth-card">
+        <h1 className="auth-title">アカウントを作成</h1>
 
-      <OAuthButton provider="google" />
+        <OAuthButton provider="google" />
 
-      <hr />
+        <div className="divider">
+          <span className="divider-text">または</span>
+        </div>
 
-      <RegisterForm />
+        <RegisterForm />
 
-      <nav>
-        <Link href="/login">すでにアカウントをお持ちの方</Link>
-      </nav>
-    </main>
+        <nav className="auth-nav">
+          <p>
+            すでにアカウントをお持ちの方は{' '}
+            <Link href="/login" className="auth-link">こちら</Link>
+          </p>
+        </nav>
+      </main>
+    </div>
   )
 }

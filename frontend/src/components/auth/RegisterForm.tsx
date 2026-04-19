@@ -36,50 +36,53 @@ export function RegisterForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       {errors.root && (
-        <p role="alert" className="error">
+        <p role="alert" className="form-alert">
           {errors.root.message}
         </p>
       )}
 
-      <div>
-        <label htmlFor="email">メールアドレス</label>
+      <div className="form-group">
+        <label htmlFor="email" className="form-label">メールアドレス</label>
         <input
           id="email"
           type="email"
           autoComplete="email"
+          className="form-input"
           aria-invalid={!!errors.email}
           {...registerField('email')}
         />
-        {errors.email && <p role="alert">{errors.email.message}</p>}
+        {errors.email && <p role="alert" className="form-error">{errors.email.message}</p>}
       </div>
 
-      <div>
-        <label htmlFor="password">パスワード</label>
+      <div className="form-group">
+        <label htmlFor="password" className="form-label">パスワード</label>
         <input
           id="password"
           type="password"
           autoComplete="new-password"
+          className="form-input"
           aria-invalid={!!errors.password}
           {...registerField('password')}
         />
-        {errors.password && <p role="alert">{errors.password.message}</p>}
+        {errors.password && <p role="alert" className="form-error">{errors.password.message}</p>}
       </div>
 
-      <div>
-        <label htmlFor="confirmPassword">パスワード（確認）</label>
+      <div className="form-group">
+        <label htmlFor="confirmPassword" className="form-label">パスワード（確認）</label>
         <input
           id="confirmPassword"
           type="password"
           autoComplete="new-password"
+          className="form-input"
           aria-invalid={!!errors.confirmPassword}
           {...registerField('confirmPassword')}
         />
         {errors.confirmPassword && (
-          <p role="alert">{errors.confirmPassword.message}</p>
+          <p role="alert" className="form-error">{errors.confirmPassword.message}</p>
         )}
       </div>
 
-      <button type="submit" disabled={isPending} aria-busy={isPending}>
+      <button type="submit" disabled={isPending} aria-busy={isPending} className="btn-primary mt-2">
         {isPending ? '処理中...' : 'アカウントを作成'}
       </button>
     </form>

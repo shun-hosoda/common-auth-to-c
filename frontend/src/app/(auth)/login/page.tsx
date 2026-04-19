@@ -13,25 +13,34 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { next, error } = await searchParams
 
   return (
-    <main>
-      <h1>ログイン</h1>
+    <div className="auth-page">
+      <main className="auth-card">
+        <h1 className="auth-title">ログイン</h1>
 
-      {error === 'callback_error' && (
-        <p role="alert">
-          認証に失敗しました。もう一度お試しください。
-        </p>
-      )}
+        {error === 'callback_error' && (
+          <p role="alert" className="form-alert">
+            認証に失敗しました。もう一度お試しください。
+          </p>
+        )}
 
-      <OAuthButton provider="google" redirectTo={next ?? '/home'} />
+        <OAuthButton provider="google" redirectTo={next ?? '/home'} />
 
-      <hr />
+        <div className="divider">
+          <span className="divider-text">または</span>
+        </div>
 
-      <LoginForm redirectTo={next} />
+        <LoginForm redirectTo={next} />
 
-      <nav>
-        <Link href="/register">アカウントを作成</Link>
-        <Link href="/reset-password">パスワードを忘れた方</Link>
-      </nav>
-    </main>
+        <nav className="auth-nav space-y-2">
+          <p>
+            アカウントをお持ちでない方は{' '}
+            <Link href="/register" className="auth-link">こちら</Link>
+          </p>
+          <p>
+            <Link href="/reset-password" className="auth-link">パスワードを忘れた方</Link>
+          </p>
+        </nav>
+      </main>
+    </div>
   )
 }

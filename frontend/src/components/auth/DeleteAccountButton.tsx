@@ -30,11 +30,12 @@ export default function DeleteAccountButton() {
 
   return (
     <div>
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert" className="form-alert">{error}</p>}
       <button
         type="button"
         onClick={handleClick}
         disabled={isPending}
+        className="btn-danger max-w-xs"
       >
         {isPending ? '処理中...' : '退会する'}
       </button>

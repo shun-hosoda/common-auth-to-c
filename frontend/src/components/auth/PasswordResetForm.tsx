@@ -36,7 +36,7 @@ export function PasswordResetRequestForm() {
 
   if (submitted) {
     return (
-      <p>
+      <p className="text-sm text-slate-600 p-4 bg-green-50 border border-green-200 rounded-lg">
         パスワードリセットのメールを送信しました。メールボックスをご確認ください。
       </p>
     )
@@ -45,24 +45,25 @@ export function PasswordResetRequestForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       {errors.root && (
-        <p role="alert" className="error">
+        <p role="alert" className="form-alert">
           {errors.root.message}
         </p>
       )}
 
-      <div>
-        <label htmlFor="email">メールアドレス</label>
+      <div className="form-group">
+        <label htmlFor="email" className="form-label">メールアドレス</label>
         <input
           id="email"
           type="email"
           autoComplete="email"
+          className="form-input"
           aria-invalid={!!errors.email}
           {...register('email')}
         />
-        {errors.email && <p role="alert">{errors.email.message}</p>}
+        {errors.email && <p role="alert" className="form-error">{errors.email.message}</p>}
       </div>
 
-      <button type="submit" disabled={isPending} aria-busy={isPending}>
+      <button type="submit" disabled={isPending} aria-busy={isPending} className="btn-primary mt-2">
         {isPending ? '送信中...' : 'リセットメールを送信'}
       </button>
     </form>
@@ -100,38 +101,40 @@ export function PasswordResetForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       {errors.root && (
-        <p role="alert" className="error">
+        <p role="alert" className="form-alert">
           {errors.root.message}
         </p>
       )}
 
-      <div>
-        <label htmlFor="password">新しいパスワード</label>
+      <div className="form-group">
+        <label htmlFor="password" className="form-label">新しいパスワード</label>
         <input
           id="password"
           type="password"
           autoComplete="new-password"
+          className="form-input"
           aria-invalid={!!errors.password}
           {...register('password')}
         />
-        {errors.password && <p role="alert">{errors.password.message}</p>}
+        {errors.password && <p role="alert" className="form-error">{errors.password.message}</p>}
       </div>
 
-      <div>
-        <label htmlFor="confirmPassword">新しいパスワード（確認）</label>
+      <div className="form-group">
+        <label htmlFor="confirmPassword" className="form-label">新しいパスワード（確認）</label>
         <input
           id="confirmPassword"
           type="password"
           autoComplete="new-password"
+          className="form-input"
           aria-invalid={!!errors.confirmPassword}
           {...register('confirmPassword')}
         />
         {errors.confirmPassword && (
-          <p role="alert">{errors.confirmPassword.message}</p>
+          <p role="alert" className="form-error">{errors.confirmPassword.message}</p>
         )}
       </div>
 
-      <button type="submit" disabled={isPending} aria-busy={isPending}>
+      <button type="submit" disabled={isPending} aria-busy={isPending} className="btn-primary mt-2">
         {isPending ? '変更中...' : 'パスワードを変更する'}
       </button>
     </form>

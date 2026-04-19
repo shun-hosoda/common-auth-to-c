@@ -23,21 +23,32 @@ export default async function ProfilePage() {
   const profile = profileResult.data as Profile | null
 
   return (
-    <main>
-      <h1>プロフィール設定</h1>
+    <div className="min-h-screen bg-slate-50">
+      <header className="bg-white border-b border-slate-200">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-4">
+          <a href="/home" className="text-sm text-slate-500 hover:text-slate-700 transition-colors">
+            ← 戻る
+          </a>
+          <h1 className="text-lg font-semibold text-slate-900">プロフィール設定</h1>
+        </div>
+      </header>
 
-      {/* FR-009: プロフィール更新フォーム */}
-      <section>
-        <h2>プロフィール編集</h2>
-        <ProfileForm profile={profile} />
-      </section>
+      <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+        {/* FR-009: プロフィール更新フォーム */}
+        <section className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-slate-900 mb-4">プロフィール編集</h2>
+          <ProfileForm profile={profile} />
+        </section>
 
-      {/* FR-010: アカウント削除 */}
-      <section>
-        <h2>アカウント削除</h2>
-        <p>アカウントを削除すると、すべてのデータが削除されます。この操作は取り消せません。</p>
-        <DeleteAccountButton />
-      </section>
-    </main>
+        {/* FR-010: アカウント削除 */}
+        <section className="bg-white rounded-xl border border-red-100 p-6 shadow-sm">
+          <h2 className="text-base font-semibold text-red-700 mb-2">アカウント削除</h2>
+          <p className="text-sm text-slate-500 mb-4">
+            アカウントを削除すると、すべてのデータが削除されます。この操作は取り消せません。
+          </p>
+          <DeleteAccountButton />
+        </section>
+      </main>
+    </div>
   )
 }
