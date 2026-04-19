@@ -39,6 +39,8 @@ git push origin v1.2.1
 
 リリースノートは [CHANGELOG.md](CHANGELOG.md) を参照。
 
+配布運用の詳細手順は [docs/infra/auth-platform-distribution-guide.md](docs/infra/auth-platform-distribution-guide.md) を参照。
+
 ---
 
 ## 0. 前提
