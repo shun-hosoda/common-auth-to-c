@@ -8,7 +8,7 @@
 ## プロジェクト概要
 
 - **プロダクト**: common-auth-to-c（toC向けSaaS認証基盤）
-- **現在のステータス**: 設計完了 → 設計レビュー待ち
+- **現在のステータス**: 実装フェーズ（設計レビュー APPROVE済み）
 - **技術スタック**: Supabase Auth (OSS) + Next.js 15 + PostgreSQL + Redis（ADR-002で決定）
 
 ## PRD要約 (docs/prd/prd.md)
