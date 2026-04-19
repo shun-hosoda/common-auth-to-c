@@ -20,7 +20,7 @@ services:
   db:
     image: supabase/postgres:15.8.1.060
     healthcheck:
-      test: pg_isready -U postgres -h localhost
+      test: pg_isready -U supabase_admin -h localhost
       interval: 5s
       timeout: 5s
       retries: 10
@@ -54,7 +54,7 @@ services:
     image: kong:2.8.1
     restart: unless-stopped
     ports:
-      - "8000:8000/tcp"  # HTTP  — フロントエンドはここに接続
+      - "8100:8000/tcp"  # HTTP  — ホスト公開ポート(8000競合回避)
       - "8443:8443/tcp"  # HTTPS（ローカル開発では不要）
     environment:
       KONG_DATABASE: "off"
@@ -85,7 +85,7 @@ services:
     environment:
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: 9999
-      API_EXTERNAL_URL: ${API_EXTERNAL_URL:-http://localhost:8000}
+      API_EXTERNAL_URL: ${API_EXTERNAL_URL:-http://localhost:8100}
 
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-postgres}
@@ -118,7 +118,7 @@ services:
       GOTRUE_EXTERNAL_GOOGLE_ENABLED: ${GOTRUE_EXTERNAL_GOOGLE_ENABLED:-false}
       GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID: ${GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID:-}
       GOTRUE_EXTERNAL_GOOGLE_SECRET: ${GOTRUE_EXTERNAL_GOOGLE_SECRET:-}
-      GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI: ${GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI:-http://localhost:8000/auth/v1/callback}
+      GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI: ${GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI:-http://localhost:8100/auth/v1/callback}
 
   # ----------------------------------------------------------
   # PostgREST — REST API（プロフィール取得等）
@@ -162,12 +162,34 @@ services:
         condition: service_healthy
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3100:3000"
     environment:
       NEXT_PUBLIC_SUPABASE_URL: http://kong:8000
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${ANON_KEY}
+      NEXT_PUBLIC_APP_URL: ${SITE_URL:-http://localhost:3100}
       SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
     volumes:
       - ../../frontend:/app
       - /app/node_modules
       - /app/.next
+
+  # ----------------------------------------------------------
+  # db-migrate — GoTrue 起動後に FK・trigger・RLS を適用
+  # auth が healthy になってから一回だけ実行される
+  # ----------------------------------------------------------
+  db-migrate:
+    image: postgres:15-alpine
+    depends_on:
+      auth:
+        condition: service_healthy
+    restart: "no"
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./volumes/db/migrations:/migrations:ro
+    command: >
+      psql
+        -h db
+        -U supabase_admin
+        -d ${POSTGRES_DB:-postgres}
+        -f /migrations/02_post_auth_setup.sql

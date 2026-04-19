@@ -37,6 +37,10 @@ function sanitizeRedirectPath(path?: string): string {
   return path
 }
 
+function getAuthCallbackBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3100'
+}
+
 /** FR-001: メール/パスワード登録 */
 export async function register(input: RegisterInput) {
   const parsed = registerSchema.safeParse(input)
@@ -49,7 +53,7 @@ export async function register(input: RegisterInput) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(':8000', ':3000') ?? 'http://localhost:3000'}/auth/callback?type=signup`,
+      emailRedirectTo: `${getAuthCallbackBaseUrl()}/auth/callback?type=signup`,
     },
   })
 

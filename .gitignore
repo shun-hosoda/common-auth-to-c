@@ -41,6 +41,9 @@ htmlcov/
 *.log
 logs/
 
+# Docker volumes (runtime data)
+infra/docker/volumes/db/data/
+
 # Terraform
 .terraform/
 *.tfstate
