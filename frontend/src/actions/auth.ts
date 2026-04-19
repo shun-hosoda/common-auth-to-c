@@ -53,7 +53,7 @@ export async function register(input: RegisterInput) {
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: `${getAuthCallbackBaseUrl()}/auth/callback?type=signup`,
+      emailRedirectTo: `${getAuthCallbackBaseUrl()}/auth/confirm`,
     },
   })
 

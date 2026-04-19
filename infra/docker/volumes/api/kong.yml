@@ -29,6 +29,16 @@ services:
           - /auth/v1/verify
     plugins:
       - name: cors
+  # GoTrue — /verify (旧形式の確認メールリンク用)
+  - name: auth-verify-open
+    url: http://auth:9999/verify
+    routes:
+      - name: auth-verify-open
+        strip_path: true
+        paths:
+          - /verify
+    plugins:
+      - name: cors
   - name: auth-v1-open-callback
     url: http://auth:9999/callback
     routes:
