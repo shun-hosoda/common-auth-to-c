@@ -48,7 +48,11 @@
 ```powershell
 Copy-Item <this-repo>/infra/docker/docker-compose.dist.yml <your-project>/infra/docker/docker-compose.auth.yml
 Copy-Item <this-repo>/infra/docker/.env.example <your-project>/infra/docker/.env
+Copy-Item <this-repo>/infra/docker/volumes/* <your-project>/infra/docker/volumes -Recurse
 ```
+
+> `volumes` 配下（`db/init`, `db/migrations`, `api/kong.yml`）が無いと正常起動しません。
+> `volumes/volumes/...` の二重階層にならないように `volumes/*` をコピーしてください。
 
 ### 3-2. 必須設定
 
@@ -58,6 +62,7 @@ Copy-Item <this-repo>/infra/docker/.env.example <your-project>/infra/docker/.env
 - `ANON_KEY`
 - `SERVICE_ROLE_KEY`
 - `SITE_URL`
+- `API_EXTERNAL_URL`
 - `ADDITIONAL_REDIRECT_URLS`
 
 ### 3-3. 起動
@@ -149,6 +154,34 @@ docker compose -f docker-compose.auth.yml up -d
 docker compose -f docker-compose.auth.yml ps
 docker compose -f docker-compose.auth.yml logs -f auth
 docker compose -f docker-compose.auth.yml logs -f kong
+docker compose -f docker-compose.auth.yml logs -f db
+```
+
+`Error dependency db failed to start` が出る場合:
+
+1. 配布先に `infra/docker/volumes` をコピー済みか確認
+2. 初回は DB ボリュームを削除して再作成
+
+```powershell
+docker compose -f docker-compose.auth.yml down -v
+docker compose -f docker-compose.auth.yml up -d
+```
+
+3. まだ失敗する場合は `db` ログを確認
+
+```powershell
+docker compose -f docker-compose.auth.yml logs db --tail=200
+```
+
+`pgsodium_getkey does not exist` が出る場合:
+
+- 配布先の `docker-compose.auth.yml` が古い可能性が高い
+- 最新の `docker-compose.dist.yml` を再コピーして起動し直す
+
+```powershell
+Copy-Item <this-repo>/infra/docker/docker-compose.dist.yml <your-project>/infra/docker/docker-compose.auth.yml -Force
+docker compose -f docker-compose.auth.yml down -v
+docker compose -f docker-compose.auth.yml up -d
 ```
 
 ### 6-2. 典型症状
@@ -157,6 +190,8 @@ docker compose -f docker-compose.auth.yml logs -f kong
   - Kong key-auth 設定と `ANON_KEY` 不一致を確認
 - `no Route matched with those values`
   - Kong route 設定とアクセスURL不一致
+- `required key API_EXTERNAL_URL missing value`
+  - `.env` に `API_EXTERNAL_URL=http://localhost:8100` を設定
 - メール確認後にログインできない
   - `SITE_URL` / `ADDITIONAL_REDIRECT_URLS` とフロントURLの整合確認
 
