@@ -41,6 +41,8 @@ git push origin v1.2.1
 
 配布運用の詳細手順は [docs/infra/auth-platform-distribution-guide.md](docs/infra/auth-platform-distribution-guide.md) を参照。
 
+フロントをそのまま移植する場合は、同ドキュメントの「4.5 最小移植チェックリスト」を参照。
+
 ---
 
 ## 0. 前提

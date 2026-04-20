@@ -91,6 +91,28 @@ NEXT_PUBLIC_APP_URL=http://localhost:3100
 
 ---
 
+## 4.5 最小移植チェックリスト（フロントをコピペで使う場合）
+
+「まずはこのリポジトリのフロントをそのまま使う」場合の最短チェックです。
+
+1. `frontend/` を利用側プロジェクトへコピーした
+2. 利用側フロントで `npm install` が成功した
+3. `NEXT_PUBLIC_SUPABASE_URL=http://localhost:8100` を設定した
+4. `NEXT_PUBLIC_SUPABASE_ANON_KEY` を認証基盤側 `.env` の `ANON_KEY` と一致させた
+5. `NEXT_PUBLIC_APP_URL` を実際のフロントURL（例: `http://localhost:3100`）にした
+6. 認証基盤側 `.env` の `SITE_URL` を同じURLにした
+7. 認証基盤側 `.env` の `ADDITIONAL_REDIRECT_URLS` にコールバックURLを入れた
+8. `SERVICE_ROLE_KEY` を `NEXT_PUBLIC_` 付きで公開していない
+9. `http://localhost:9000` で確認メールが受信できる
+10. `register → メール確認 → login` が一連で成功する
+
+失敗した場合の最短確認:
+- `docker compose -f docker-compose.auth.yml logs -f auth`
+- `docker compose -f docker-compose.auth.yml logs -f kong`
+- フロントのブラウザ Console / Network を確認
+
+---
+
 ## 5. 更新運用（共通基盤の配布）
 
 ### 推奨方式
